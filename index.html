@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tops</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #0B0E11;
+            color: #FFF;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        
+        .title {
+            padding: 16px 0;
+            text-align: center;
+            font-size: 36px;
+            color: #F6465D;
+            font-style: oblique;
+        }
+        
+        .date {
+            position: absolute;
+            right: 20px;
+            font-weight: lighter;
+            color: #fff;
+        }
+        
+        .app {
+            max-width: 600px;
+            padding: 0 12px;
+            box-sizing: border-box;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        .outer {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px 8px;
+            border-bottom: 1px solid #666;
+        }
+        
+        .index {
+            flex-basis: 30px;
+        }
+        
+        .name {
+            flex: 1;
+            padding-left: 12px;
+        }
+        
+        .per {
+            color: #0ECB81;
+        }
+        
+        .end {
+            padding: 20px 0 30px;
+            text-align: center;
+            font-weight: lighter;
+            color: #bbb;
+        }
+        
+        .tags {
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .tag {
+            width: 42px;
+            height: 60px;
+            border: 1px solid #333;
+            box-sizing: border-box;
+            text-align: center;
+            border-radius: 2px;
+            overflow: hidden;
+            font-weight: normal;
+            cursor: pointer;
+        }
+        
+        .tag:last-child {
+            margin-right: 0;
+        }
+        
+        .month {
+            height: 22px;
+            font-size: 14px;
+            line-height: 22px;
+            letter-spacing: 1px;
+        }
+        
+        .day {
+            height: 38px;
+            line-height: 38px;
+            font-weight: bold;
+            color: #fff;
+            font-size: 22px;
+        }
+        
+        .active {
+            box-sizing: border-box;
+            border: 1px solid #4285f4;
+        }
+        
+        .active .month {
+            background-color: #0B0E11;
+        }
+        
+        .active .day {
+            background-color: #4285f4;
+        }
+    </style>
+</head>
+
+<body class="app">
+    <div id="app">
+        <div class="title">TOPS</div>
+        <div class="tags" v-if="days.length">
+            <div class="tag" :class="d.str === active ? 'active' : ''" v-for="d in days" @click="onTagClick(d.str)">
+                <div class="month">{{d.month}}月</div>
+                <div class="day">{{d.date}}</div>
+            </div>
+        </div>
+        <div v-if="list.length">
+            <div v-for="(l, i) in list" class="outer">
+                <div class="index">{{ i + 1 }}.</div>
+                <div class="name">{{ l.symb.split('USDT')[0] }}</div>
+                <div class="per">{{ l.maxinc }}%</div>
+            </div>
+        </div>
+        <div class="end">END</div>
+    </div>
+    <script>
+        const app = new Vue({
+            el: '#app',
+            data: {
+                message: 'hello',
+                list: [],
+                days: [],
+                active: ''
+            },
+            methods: {
+                onTagClick: function(str) {
+                    window.location.search = `d=${str}`;
+                }
+            }
+        })
+
+        // 时间计算
+        const days = [];
+        const year = new Date().getFullYear();
+        const month = new Date().getMonth();
+        const date = new Date().getDate();
+        const hour = new Date().getHours();
+
+        let current = hour >= 9 ? date - 1 : date - 2;
+
+        for (let i = 0; i < 7; i++) {
+            const newDate = new Date(year, month, current);
+            const y = newDate.getFullYear();
+            const m = newDate.getMonth() + 1;
+            const d = newDate.getDate();
+            days.push({
+                year: y,
+                month: m,
+                date: d,
+                str: `${y}-${m}-${d}`
+            });
+            current -= 1;
+        }
+        app.days = days;
+
+        // 查询字符串处理
+        const search = window.location.search
+        if (search) {
+            app.active = search.split('d=')[1];
+        } else {
+            app.active = days[0].str;
+        }
+
+        // 请求数据
+        var request = new XMLHttpRequest()
+        request.onreadystatechange = function() {
+            if (request.readyState === 4) {
+                if (request.status === 200) {
+                    // 成功
+                    app.list = JSON.parse(request.responseText);
+                } else {
+                    // 失败
+                    console.log('fail');
+                }
+            }
+        }
+        request.open('GET', `https://sankincn.github.io/tops/spot/${app.active}.json`)
+        request.send();
+    </script>
+</body>
+
+</html>

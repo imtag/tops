@@ -46,6 +46,7 @@
             justify-content: space-between;
             padding: 20px 8px;
             border-bottom: 1px solid #666;
+            cursor: pointer;
         }
         
         .index {
@@ -54,7 +55,7 @@
         
         .name {
             flex: 1;
-            padding-left: 12px;
+            padding-left: 8px;
         }
         
         .per {
@@ -129,7 +130,7 @@
             </div>
         </div>
         <div v-if="list.length">
-            <div v-for="(l, i) in list" class="outer">
+            <div v-for="(l, i) in list" class="outer" @click="onOuterClick(l.symb)">
                 <div class="index">{{ i + 1 }}.</div>
                 <div class="name">{{ l.symb.split('USDT')[0] }}</div>
                 <div class="per">{{ l.maxinc }}%</div>
@@ -149,6 +150,9 @@
             methods: {
                 onTagClick: function(str) {
                     window.location.search = `d=${str}`;
+                },
+                onOuterClick: function(symb) {
+                    window.open('https://www.binancezh.info/zh-CN/trade/' + symb + '?theme=dark&type=spot', '_blank');
                 }
             }
         })

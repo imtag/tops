@@ -16,8 +16,8 @@ function toPercent(num) {
 
 // 开始和结束日期
 const ym = '2022-8';
-const start = 16;
-const end = 21;
+const start = 21;
+const end = 22;
 
 let currentDate = start;
 let resArr = [];

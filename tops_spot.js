@@ -16,8 +16,8 @@ function toPercent(num) {
 
 // 开始和结束日期
 const ym = '2022-8';
-const start = 30;
-const end = 31;
+const start = 31;
+const end = 32;
 
 let currentDate = start;
 let resArr = [];
@@ -50,7 +50,7 @@ function getKline(symbolIndex) {
     // 请求数据
     const symbol = symbols[symbolIndex].symbol;
     const startTime = Date.parse(`${ym}-${currentDate} 08:00:00`);
-    const endTime = Date.parse(`${ym}-${currentDate + 1} 07:59:59`);
+    const endTime = startTime + 24 * 60 * 60 * 1000 - 1;
     const qs = `symbol=${symbol}&interval=1d&startTime=${startTime}&endTime=${endTime}`;
     r.get({ url: `https://api.binance.com/api/v3/klines?${qs}` }, (err, res) => {
         console.log(`${symbolIndex}. ${symbol}`);

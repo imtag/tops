@@ -132,7 +132,7 @@
         <div v-if="list.length">
             <div v-for="(l, i) in list" class="outer" @click="onOuterClick(l.symb)">
                 <div class="index">{{ i + 1 }}.</div>
-                <div class="name">{{ l.symb.split('USDT')[0] }}</div>
+                <div class="name">{{ l.symb }}</div>
                 <div class="per">{{ l.maxinc }}%</div>
             </div>
         </div>
